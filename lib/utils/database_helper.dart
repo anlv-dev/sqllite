@@ -44,4 +44,40 @@ Future<Database> initializeDatabase() async {
 void _createDb(Database db, int newVersion ) async {
   await db.execute('CREATE TABLE noteTable($colID INTEGER PRIMARY KEY AUTO INCREMENT, $colTitle TEXT, $colDescription TEXT, $colPriorities INTEGER, $colDate TEXT)');
 }
+
+//Fetch data from DB
+Future<List<Map<String,dynamic>>> getNoteMapToList()async{
+  Database db = await this.database;
+  var result = await db.query(noteTable,orderBy: 'colPriorities ASC');
+  return result;
+}
+
+//insert
+Future<int> insertNote(Note note)async{
+  Database db = await this.database;
+  var result = await db.insert(noteTable,note.toMap());
+  return result;
+}
+
+//Update
+  Future<int> updateNote(Note note) async{
+    Database db= await this.database;
+    var result = await db.update(noteTable, note.toMap(),where: '$colID = ?',whereArgs: [note.id]);
+    return result;
+  }
+//Delete
+
+  Future<int> deleteNote(int id) async{
+    Database db = await this.database;
+    int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colID= $id');
+    return result;
+  }
+
+  //Get number object in database
+
+  Future<int> getCount() async{
+    Database db = await this.database;
+    List<Map<String,dynamic>> x = await db.rawQuery('SELECT COUNT(*) FROM $noteTable');
+    int result = Sqflite.firstIntValue(x);
+    return result;
 }
