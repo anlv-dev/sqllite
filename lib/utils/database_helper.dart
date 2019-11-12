@@ -9,10 +9,10 @@ class DatabaseHelper {
   static Database _database; //Singleton Database
 
   String noteTable = 'note_table';
-  String colID = 'id';
+  String colId = 'id';
   String colTitle = 'title';
   String colDescription = 'description';
-  String colPriorities = 'priorities';
+  String colPriority = 'priority';
   String colDate = 'date';
 
   DatabaseHelper._createInstance();
@@ -41,13 +41,14 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE noteTable($colID INTEGER PRIMARY KEY AUTO INCREMENT, $colTitle TEXT, $colDescription TEXT, $colPriorities INTEGER, $colDate TEXT)');
+        'CREATE TABLE $noteTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, '
+        '$colDescription TEXT, $colPriority INTEGER, $colDate TEXT)');
   }
 
 //Fetch data from DB
   Future<List<Map<String, dynamic>>> getNoteMapToList() async {
     Database db = await this.database;
-    var result = await db.query(noteTable, orderBy: 'colPriorities ASC');
+    var result = await db.query(noteTable, orderBy: '$colPriority ASC');
     return result;
   }
 
@@ -62,7 +63,7 @@ class DatabaseHelper {
   Future<int> updateNote(Note note) async {
     Database db = await this.database;
     var result = await db.update(noteTable, note.toMap(),
-        where: '$colID = ?', whereArgs: [note.id]);
+        where: '$colId = ?', whereArgs: [note.id]);
     return result;
   }
 
@@ -70,7 +71,7 @@ class DatabaseHelper {
 
   Future<int> deleteNote(int id) async {
     Database db = await this.database;
-    int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colID= $id');
+    int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colId= $id');
     return result;
   }
 
