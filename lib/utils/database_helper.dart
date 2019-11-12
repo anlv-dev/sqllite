@@ -17,7 +17,7 @@ class DatabaseHelper {
 
   DatabaseHelper._createInstance();
 
-  factory DatabaseHelper(){
+  factory DatabaseHelper() {
     if (_databaseHelper == null) {
       _databaseHelper = DatabaseHelper._createInstance();
     }
@@ -61,8 +61,8 @@ class DatabaseHelper {
 //Update
   Future<int> updateNote(Note note) async {
     Database db = await this.database;
-    var result = await db.update(
-        noteTable, note.toMap(), where: '$colID = ?', whereArgs: [note.id]);
+    var result = await db.update(noteTable, note.toMap(),
+        where: '$colID = ?', whereArgs: [note.id]);
     return result;
   }
 
@@ -78,9 +78,24 @@ class DatabaseHelper {
 
   Future<int> getCount() async {
     Database db = await this.database;
-    List<Map<String, dynamic>> x = await db.rawQuery(
-        'SELECT COUNT(*) FROM $noteTable');
+    List<Map<String, dynamic>> x =
+        await db.rawQuery('SELECT COUNT(*) FROM $noteTable');
     int result = Sqflite.firstIntValue(x);
     return result;
+  }
+
+  //Convert List Map to List Note
+
+  Future<List<Note>> getNoteToList() async {
+    var noteMapList = await getNoteMapToList();
+    int count = noteMapList.length; //Count elements of Map List
+
+    List<Note> noteList = List<Note>();
+
+    for (int i = 0; i < count; i++) {
+      noteList.add(Note.fromMapObject(noteMapList[i]));
+    }
+
+    return noteList;
   }
 }

@@ -18,7 +18,7 @@ class Note {
 
   //Set value
 
-  set tittle(String newTittle) {
+  set title(String newTittle) {
     if (newTittle.length <= 255) {
       this._title = newTittle;
     }
